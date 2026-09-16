@@ -1,0 +1,2 @@
+import {serve} from 'https://deno.land/std@0.224.0/http/server.ts';
+serve(async(req)=>{if(req.method!=='POST')return new Response('Method not allowed',{status:405});const provider=Deno.env.get('EMAIL_PROVIDER');const key=Deno.env.get('EMAIL_API_KEY');if(!provider||!key)return Response.json({ok:false,configured:false,message:'Email is not configured. Set EMAIL_PROVIDER and EMAIL_API_KEY.'},{status:503});return Response.json({ok:false,configured:true,message:`Provider adapter '${provider}' is configured but must be implemented before production sending.`},{status:501});});

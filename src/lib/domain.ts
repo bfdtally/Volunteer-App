@@ -1,0 +1,11 @@
+export type EventStatus='draft'|'published'|'registration_closed'|'in_progress'|'attendance_review'|'finalized'|'archived'|'cancelled';
+export type AttendanceSession={checkIn:string;checkOut?:string;method:'qr'|'manual'|'walk_in'};
+export const minutesBetween=(a:string,b:string)=>Math.max(0,Math.round((new Date(b).getTime()-new Date(a).getTime())/60000));
+export const recordedMinutes=(sessions:AttendanceSession[])=>sessions.reduce((sum,s)=>sum+(s.checkOut?minutesBetween(s.checkIn,s.checkOut):0),0);
+export const roundedAward=(minutes:number,unit:30|60)=>Math.round(minutes/unit)*unit;
+export const officialAward=(recorded:number,adjustment:number)=>Math.max(0,recorded+adjustment);
+export const canEditFinalized=(status:EventStatus)=>status!=='finalized'&&status!=='archived';
+export const canManage=(role:string)=>['owner','administrator'].includes(role);
+export const qrMatchesEvent=(credentialEventId:string,currentEventId:string)=>credentialEventId===currentEventId;
+export const isDuplicateScan=(lastScan:number,now:number,windowMs=60000)=>now-lastScan<windowMs;
+export const cloneEvent=<T extends Record<string,unknown>>(event:T)=>{const {id:_,registrations:__,attendance:___,serviceAwards:____,documents:_____,...config}=event;return {...config,status:'draft',name:`${String(event.name)} (Copy)`};};
