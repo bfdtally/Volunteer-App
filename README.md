@@ -2,6 +2,8 @@
 
 Production-oriented V1 foundation for a multi-tenant volunteer management platform. The React application includes management, public registration, event-day, attendance/service-credit, document, reporting, and platform-admin experiences. A Supabase migration provides the tenant data model, indexes, grants, RLS policies, narrow public registration RPC, and append-only audit protection.
 
+Volunteer opportunities support three scheduling models: one-time events, multi-day events with explicit occurrences, and ongoing programs with repeated sign-in/sign-out sessions across a term. The creation wizard adapts its schedule and attendance settings to the selected type.
+
 ## Requirements
 
 - Node.js 20.19+
