@@ -2,6 +2,7 @@ export type EventStatus='draft'|'published'|'registration_closed'|'in_progress'|
 export type OpportunityType='one_time'|'multi_day'|'ongoing_program';
 export const opportunityLabel=(type:OpportunityType)=>({one_time:'One-time event',multi_day:'Multi-day event',ongoing_program:'Ongoing program'}[type]);
 export const attendanceLabel=(type:OpportunityType)=>type==='ongoing_program'?'Program sign-in':'Event check-in';
+export const availabilityMode=(type:OpportunityType,programMode='flexible')=>type==='ongoing_program'?programMode:'fixed';
 export type AttendanceSession={checkIn:string;checkOut?:string;method:'qr'|'manual'|'walk_in'};
 export const minutesBetween=(a:string,b:string)=>Math.max(0,Math.round((new Date(b).getTime()-new Date(a).getTime())/60000));
 export const recordedMinutes=(sessions:AttendanceSession[])=>sessions.reduce((sum,s)=>sum+(s.checkOut?minutesBetween(s.checkIn,s.checkOut):0),0);
