@@ -1,0 +1,11 @@
+import {useState} from 'react';
+import {Link} from 'react-router-dom';
+import {ArrowLeft,Building2,Check} from 'lucide-react';
+import {supabase} from '../lib/supabase';
+import {useWorkspace} from './Workspace';
+
+export function OrganizationSettings(){
+ const {organization,reload}=useWorkspace();const [name,setName]=useState(organization.name),[email,setEmail]=useState(organization.contact_email||''),[accent,setAccent]=useState(organization.accent_color||'#163a5f'),[busy,setBusy]=useState(false),[message,setMessage]=useState('');
+ const save=async()=>{setBusy(true);setMessage('');const {error}=await supabase!.from('organizations').update({name,contact_email:email||null,accent_color:accent}).eq('id',organization.id);setBusy(false);if(error)setMessage(error.message);else{setMessage('Organization settings saved.');await reload()}};
+ return <><Link className="back dashboard-return" to="/app"><ArrowLeft/>Back to main dashboard</Link><div className="page-head"><div><span className="eyebrow">CURRENT ORGANIZATION</span><h1>{organization.name}</h1><p>You are managing this organization’s opportunities, volunteers, registrations, and users.</p></div><button className="button primary" onClick={save} disabled={busy}>{busy?'Saving…':'Save organization'}</button></div>{message&&<div className={message.includes('saved')?'program-callout':'error'}>{message.includes('saved')&&<Check/>}<div>{message}</div></div>}<section className="panel form-card"><div className="organization-identity"><span className="org-avatar large">{organization.name.slice(0,2).toUpperCase()}</span><div><h2>Organization workspace</h2><p>This name appears in the sidebar so you always know which organization you are managing.</p></div></div><div className="form-grid"><label>Organization name<input value={name} onChange={e=>setName(e.target.value)}/></label><label>Public contact email<input type="email" value={email} onChange={e=>setEmail(e.target.value)}/></label><label>Workspace accent color<div className="color-input"><input type="color" value={accent} onChange={e=>setAccent(e.target.value)}/><input value={accent} onChange={e=>setAccent(e.target.value)}/></div></label><div className="workspace-note"><Building2/><span><b>Workspace ID</b><small>{organization.id}</small></span></div></div></section></>
+}
