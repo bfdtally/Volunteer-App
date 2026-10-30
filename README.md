@@ -1,6 +1,6 @@
 # VolunteerHQ by Educational Apps Lab
 
-Production-oriented V1 foundation for a multi-tenant volunteer management platform. The React application includes management, public registration, event-day, attendance/service-credit, document, reporting, and platform-admin experiences. A Supabase migration provides the tenant data model, indexes, grants, RLS policies, narrow public registration RPC, and append-only audit protection.
+Live V1 volunteer management application. The React application includes organization management, opportunity creation, public registration, secure volunteer QR credentials, event-day attendance, volunteer records, and reporting. Supabase provides authentication, the tenant data model, storage, indexes, grants, RLS policies, and narrow public registration APIs.
 
 Volunteer opportunities support three scheduling models: one-time events, multi-day events with explicit occurrences, and ongoing programs with repeated sign-in/sign-out sessions across a term. The creation wizard adapts its schedule and attendance settings to the selected type.
 
@@ -19,7 +19,7 @@ cp .env.example .env.local
 pnpm dev
 ```
 
-Without valid Supabase variables the interface runs in a clearly labeled demo workspace using fictional data. Add the project URL and **publishable** key from Supabase's Connect dialog to enable authentication. Never place a secret/service-role key in a `VITE_` variable.
+The application requires valid Supabase variables. Add the project URL and **publishable** key from Supabase's Connect dialog to enable authentication. Never place a secret/service-role key in a `VITE_` variable.
 
 ## Supabase
 
@@ -34,16 +34,7 @@ The baseline migration creates all V1 tables and enables RLS on every public tab
 
 Before production, run Supabase database advisors, review all policies against the final permission matrix, configure CAPTCHA/rate limiting for public registration, and test the full RLS suite against two seeded tenants. The local stack is development-only.
 
-### Storage buckets
-
-Create private buckets named `organization-assets` and `generated-documents`. Policies should scope paths as `<organization_id>/...` and check active membership with the same organization predicate used by the database migration. Certificate/letter downloads should use short-lived signed URLs.
-
-### First platform administrator
-
-1. Create the first user through Supabase Auth.
-2. Insert its profile with the matching `auth.users.id`.
-3. In the SQL editor, update that profile's `platform_role` to `platform_admin` while operating as the project administrator.
-4. Sign out and back in, then verify `/platform` access. Do not expose this bootstrap as a public UI action.
+The `event-logos` bucket is public for event branding; uploads are restricted by organization membership and path. Generated private documents should use a separate private bucket and short-lived signed URLs when that integration is added.
 
 ## Email
 
@@ -64,7 +55,7 @@ pnpm preview    # preview built app
 
 ## Render deployment
 
-`render.yaml` defines a static site, SPA rewrite, and security headers. Connect the repository in Render, set `VITE_SUPABASE_URL`, `VITE_SUPABASE_PUBLISHABLE_KEY`, and `VITE_APP_URL`, then deploy. Apply database migrations separately with a protected CI/CD environment using `supabase db push`; never ship database passwords or service-role keys to Render's browser bundle.
+Render is configured as a dashboard-managed static site (no Blueprint). It builds with `pnpm install --frozen-lockfile && pnpm build`, publishes `dist`, and rewrites routes to `index.html`. Set `VITE_SUPABASE_URL`, `VITE_SUPABASE_PUBLISHABLE_KEY`, and `VITE_APP_URL` in Render. Apply database migrations separately; never ship database passwords or service-role keys to the browser bundle.
 
 ## Important production checks
 
@@ -72,7 +63,7 @@ pnpm preview    # preview built app
 - Test registration, same-email duplicate detection, event capacity, wrong-event QR, and the 60-second scan guard.
 - Verify multiple attendance sessions and timezone display.
 - Ensure finalized events are immutable except through an authorized, reasoned reopen function.
-- Add provider-backed document rendering/email and camera scanning before treating those integration surfaces as production-complete.
+- Add provider-backed document rendering/email and camera scanning before enabling those integration surfaces.
 - Exercise keyboard, screen-reader, reduced-motion, phone, tablet, and kiosk flows.
 
 © 2026 Educational Apps Lab. All rights reserved.

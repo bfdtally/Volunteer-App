@@ -1,0 +1,23 @@
+import {useEffect,useState,type CSSProperties} from 'react';
+import {Link,useParams} from 'react-router-dom';
+import {CalendarDays,Check,Clock,Download,MapPin,ShieldCheck} from 'lucide-react';
+import QRCode from 'qrcode';
+import {Copyright} from '../components/UI';
+import {supabase} from '../lib/supabase';
+
+type Occurrence={id:string;starts_at:string;ends_at:string;location:string};
+type Credential={registration_id:string;registration_status:string;volunteer_first_name:string;volunteer_last_name:string;event_name:string;event_slug:string;event_date:string;event_start_time:string;event_end_time:string;event_location:string;event_logo_url:string|null;event_primary_color:string;event_secondary_color:string;selected_occurrences:Occurrence[]};
+
+const readableDate=(value:string)=>new Date(value.includes('T')?value:`${value}T12:00:00`).toLocaleDateString(undefined,{weekday:'long',month:'long',day:'numeric',year:'numeric'});
+const readableTime=(value:string)=>new Date(`2000-01-01T${value}`).toLocaleTimeString([],{hour:'numeric',minute:'2-digit'});
+
+export function RegistrationCredential(){
+ const {secureToken}=useParams();const [credential,setCredential]=useState<Credential|null>(null),[qr,setQr]=useState(''),[loading,setLoading]=useState(true),[error,setError]=useState('');
+ useEffect(()=>{if(!secureToken){setError('This credential link is incomplete.');setLoading(false);return}supabase!.rpc('get_registration_credential',{secure_token:secureToken}).then(({data,error})=>{const row=(Array.isArray(data)?data[0]:data) as Credential|undefined;if(error)setError(error.message);else if(!row)setError('This registration credential could not be found.');else setCredential(row);setLoading(false)})},[secureToken]);
+ useEffect(()=>{if(credential&&secureToken)QRCode.toDataURL(secureToken,{width:320,margin:2,color:{dark:credential.event_primary_color||'#163a5f',light:'#ffffff'}}).then(setQr)},[credential,secureToken]);
+ if(loading)return <div className="confirmation public"><main><p>Opening your volunteer credential…</p></main></div>;
+ if(error||!credential)return <div className="confirmation public"><main><h1>Credential unavailable</h1><p>{error}</p><p>Please ask the event organizer for help if you believe this link should still work.</p></main><Copyright powered/></div>;
+ const theme={'--event-primary':credential.event_primary_color||'#163a5f','--event-accent':credential.event_secondary_color||'#ef7b45'} as CSSProperties;
+ const download=()=>{const link=document.createElement('a');link.href=qr;link.download=`${credential.event_slug}-volunteer-qr.png`;link.click()};
+ return <div className="confirmation public event-themed" style={theme}><header><div className="customer-brand">{credential.event_logo_url?<img className="event-logo" src={credential.event_logo_url} alt="Event logo"/>:<span className="org-avatar">VH</span>}<div><b>{credential.event_name}</b><small>Volunteer credential</small></div></div><Link className="back" to={`/event/${credential.event_slug}`}>Opportunity details</Link></header><main><div className="success-mark"><Check/></div><span className="eyebrow">REGISTRATION CONFIRMED</span><h1>You’re all set, {credential.volunteer_first_name}!</h1><p>Keep this private link and present the QR code at sign-in.</p><div className="credential panel"><div className="credential-info"><span>VOLUNTEER CREDENTIAL</span><h2>{credential.event_name}</h2>{credential.selected_occurrences.length?credential.selected_occurrences.map(day=><div className="credential-day" key={day.id}><CalendarDays/>{readableDate(day.starts_at)} · {new Date(day.starts_at).toLocaleTimeString([],{hour:'numeric',minute:'2-digit'})}<br/><MapPin/>{day.location}</div>):<><div><CalendarDays/>{readableDate(credential.event_date)} · {readableTime(credential.event_start_time)} – {readableTime(credential.event_end_time)}</div><div><MapPin/>{credential.event_location}</div></>}<hr/><label>Volunteer<b>{credential.volunteer_first_name} {credential.volunteer_last_name}</b></label><label>Registration ID<b>{credential.registration_id.slice(0,8).toUpperCase()}</b></label></div><div className="qr">{qr&&<img src={qr} alt="Secure attendance QR code"/>}<b>Present at sign-in</b><small>This code is unique to this registration.</small></div></div><div className="confirm-actions"><button className="button primary" disabled={!qr} onClick={download}><Download/>Save QR</button></div><div className="notice"><ShieldCheck/><div><b>Keep this QR private</b><span>It identifies your registration but displays only the event and your name.</span></div></div></main><Copyright powered/></div>
+}
