@@ -2,6 +2,20 @@
 .brand-link:hover{background:#ffffff12}
 .org-switch>svg{margin-left:auto;color:#9fb4c5}
 .org-switch:hover{background:#285170;border-color:#55738d}
+.profile{grid-template-columns:auto 1fr}
+.profile-logout{grid-column:1/-1;width:100%;min-height:36px;border:1px solid #42627d;border-radius:8px;background:#163a59;color:#e7eef3;display:flex;align-items:center;justify-content:center;gap:8px;font-size:12px;font-weight:700}
+.profile-logout:hover{background:#285170;border-color:#668097;color:white}
+.profile-logout:disabled,.profile-menu button:disabled{opacity:.6;cursor:wait}
+.profile-menu-wrap{position:relative}
+.profile-trigger{border:1px solid transparent;padding:0;cursor:pointer}
+.profile-trigger:hover,.profile-trigger[aria-expanded="true"]{border-color:#e9a17f;box-shadow:0 0 0 3px #ef7b4520}
+.profile-menu{position:absolute;right:0;top:42px;width:210px;padding:8px;background:white;border:1px solid var(--line);border-radius:10px;box-shadow:0 12px 32px #17324b24;z-index:30}
+.profile-menu>div{padding:8px 10px 11px;border-bottom:1px solid var(--line)}
+.profile-menu b,.profile-menu small{display:block}
+.profile-menu b{font-size:13px}.profile-menu small{font-size:11px;margin-top:2px;text-transform:capitalize}
+.profile-menu button{width:100%;margin-top:6px;padding:9px 10px;border:0;border-radius:7px;background:transparent;color:var(--ink);display:flex;align-items:center;gap:9px;text-align:left;font-size:12px;font-weight:700}
+.profile-menu button:hover{background:#fff2eb;color:#a7461c}
+.logout-error{position:fixed;right:24px;top:82px;max-width:360px;padding:12px 14px;border:1px solid #efc1c1;border-radius:8px;background:#fdecec;color:var(--danger);box-shadow:0 8px 24px #17324b20;font-size:12px;z-index:40}
 .dashboard-guide{padding-bottom:22px}
 .organizer-tutorial{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(280px,.75fr);overflow:hidden;margin-bottom:22px;background:var(--navy2);border-color:var(--navy2);color:white}
 .organizer-tutorial-video{background:#071d30;display:grid;place-items:center;min-width:0}
