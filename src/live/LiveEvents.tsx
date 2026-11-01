@@ -11,9 +11,11 @@ import {
   Clock,
   MapPin,
   Plus,
+  PlayCircle,
   Repeat2,
   Search,
   Users,
+  X,
 } from "lucide-react";
 import { Metric, Status, Empty } from "../components/UI";
 import { supabase } from "../lib/supabase";
@@ -54,6 +56,7 @@ const pretty = (d: string) =>
   });
 export function LiveDashboard() {
   const { profile, organization } = useWorkspace();
+  const [tutorialOpen, setTutorialOpen] = useState(true);
   const [stats, setStats] = useState({
     events: 0,
     volunteers: 0,
@@ -130,6 +133,55 @@ export function LiveDashboard() {
           icon={<Clock />}
         />
       </div>
+      {tutorialOpen ? (
+        <section className="panel organizer-tutorial" aria-labelledby="organizer-tutorial-title">
+          <div className="organizer-tutorial-video">
+            <video
+              controls
+              playsInline
+              preload="metadata"
+              poster="/tutorial/volunteerhq-how-to-poster.jpg"
+            >
+              <source src="/tutorial/volunteerhq-how-to.mp4" type="video/mp4" />
+              Your browser does not support embedded video.
+            </video>
+          </div>
+          <div className="organizer-tutorial-copy">
+            <button
+              className="icon tutorial-close"
+              type="button"
+              aria-label="Hide organizer tutorial"
+              onClick={() => setTutorialOpen(false)}
+            >
+              <X />
+            </button>
+            <span className="eyebrow">NEW ORGANIZER GUIDE</span>
+            <h2 id="organizer-tutorial-title">How VolunteerHQ works</h2>
+            <p>
+              See the complete workflow—from creating an opportunity and
+              scheduling multiple days to publishing registration, managing
+              volunteers, and recording attendance.
+            </p>
+            <div className="tutorial-meta">
+              <PlayCircle />
+              <span>2 minutes 58 seconds · Narrated with captions</span>
+            </div>
+          </div>
+        </section>
+      ) : (
+        <button
+          type="button"
+          className="panel tutorial-reopen"
+          onClick={() => setTutorialOpen(true)}
+        >
+          <PlayCircle />
+          <span>
+            <b>Watch the VolunteerHQ organizer guide</b>
+            <small>Learn the complete workflow in under three minutes.</small>
+          </span>
+          <ChevronRight />
+        </button>
+      )}
       <section className="panel dashboard-guide">
         <div className="section-head">
           <div>

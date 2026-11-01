@@ -3,10 +3,28 @@
 .org-switch>svg{margin-left:auto;color:#9fb4c5}
 .org-switch:hover{background:#285170;border-color:#55738d}
 .dashboard-guide{padding-bottom:22px}
+.organizer-tutorial{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(280px,.75fr);overflow:hidden;margin-bottom:22px;background:var(--navy2);border-color:var(--navy2);color:white}
+.organizer-tutorial-video{background:#071d30;display:grid;place-items:center;min-width:0}
+.organizer-tutorial-video video{display:block;width:100%;aspect-ratio:16/9;background:#071d30}
+.organizer-tutorial-copy{position:relative;padding:34px 32px;align-self:center}
+.organizer-tutorial-copy .eyebrow{color:#ffb28f}
+.organizer-tutorial-copy h2{font-size:25px;margin:9px 38px 12px 0}
+.organizer-tutorial-copy p{color:#c4d4df;font-size:14px;margin-bottom:24px}
+.tutorial-close{position:absolute;right:15px;top:15px;color:#d7e2e9}
+.tutorial-close:hover{background:#ffffff12;color:white}
+.tutorial-meta{display:flex;align-items:center;gap:9px;color:#dce8ee;font-size:12px;font-weight:600}
+.tutorial-meta svg{width:20px;color:#ff9d70}
+.tutorial-reopen{width:100%;display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:14px;padding:17px 20px;margin-bottom:22px;text-align:left;color:var(--ink)}
+.tutorial-reopen:hover{border-color:#94a9b8;box-shadow:0 6px 20px #17324b10}
+.tutorial-reopen>svg:first-child{width:28px;color:var(--orange)}
+.tutorial-reopen>svg:last-child{width:20px;color:var(--muted)}
+.tutorial-reopen b,.tutorial-reopen small{display:block}
+.tutorial-reopen small{margin-top:3px}
 .quick-links{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;padding:0 22px}
 .quick-links>a{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:12px;border:1px solid var(--line);border-radius:10px;padding:18px}
 .quick-links>a:hover{border-color:#94a9b8;box-shadow:0 6px 20px #17324b10;transform:translateY(-1px)}
 .quick-links>a>svg:first-child{color:var(--navy)}
 .quick-links b,.quick-links small{display:block}
 .quick-links small{margin-top:4px}
+@media(max-width:1000px){.organizer-tutorial{grid-template-columns:1fr}.organizer-tutorial-copy{padding:25px}}
 @media(max-width:900px){.quick-links{grid-template-columns:1fr}}
