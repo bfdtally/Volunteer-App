@@ -16,6 +16,24 @@
 .profile-menu button{width:100%;margin-top:6px;padding:9px 10px;border:0;border-radius:7px;background:transparent;color:var(--ink);display:flex;align-items:center;gap:9px;text-align:left;font-size:12px;font-weight:700}
 .profile-menu button:hover{background:#fff2eb;color:#a7461c}
 .logout-error{position:fixed;right:24px;top:82px;max-width:360px;padding:12px 14px;border:1px solid #efc1c1;border-radius:8px;background:#fdecec;color:var(--danger);box-shadow:0 8px 24px #17324b20;font-size:12px;z-index:40}
+.scanner-station{padding:22px;margin-bottom:22px;overflow:hidden}
+.scanner-station.active{border-color:#88a9bd;box-shadow:0 8px 28px #17324b0d}
+.scanner-heading{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:16px}
+.scanner-heading h2{margin:3px 0}.scanner-heading p{margin:0;font-size:13px}
+.scanner-icon{width:48px;height:48px;border-radius:12px;background:#edf4f8;color:var(--navy);display:grid;place-items:center}
+.scanner-icon svg{width:24px}.scanner-console{margin:20px -22px -22px;padding:20px 22px 22px;border-top:1px solid var(--line);background:#f7f9fa}
+.scan-mode{display:inline-flex;padding:4px;margin-bottom:15px;border:1px solid var(--line);border-radius:10px;background:white}
+.scan-mode button{min-height:36px;padding:0 14px;border:0;border-radius:7px;background:transparent;color:var(--muted);display:flex;align-items:center;gap:7px;font-size:12px;font-weight:700}
+.scan-mode button svg{width:16px}.scan-mode button.active{background:var(--navy);color:white;box-shadow:0 3px 8px #17324b24}
+.scanner-input{position:relative;min-height:76px;padding:15px 18px;border:2px solid #7d9cb0;border-radius:11px;background:white;display:grid;grid-template-columns:auto 1fr;align-items:center;gap:14px;cursor:text;box-shadow:0 0 0 4px #4b88ad14}
+.scanner-input>svg{width:28px;height:28px;color:var(--orange)}.scanner-input b,.scanner-input small{display:block}.scanner-input small{margin-top:3px;font-weight:400}
+.scanner-input input{position:absolute;inset:0;opacity:.01;margin:0;cursor:text}
+.scan-feedback{margin-top:14px;padding:16px;border:1px solid;border-radius:10px;display:flex;align-items:center;gap:13px}
+.scan-feedback>span{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;flex:0 0 auto}.scan-feedback svg{width:19px}
+.scan-feedback b,.scan-feedback small{display:block}.scan-feedback small{margin-top:4px}
+.scan-feedback.success{background:#e9f7f0;border-color:#acd9c4;color:#176a49}.scan-feedback.success>span{background:#cdebdc}
+.scan-feedback.warning{background:#fff4e9;border-color:#efc79f;color:#8a4e17}.scan-feedback.warning>span{background:#f8dfc4}
+@media(max-width:700px){.scanner-heading{grid-template-columns:auto 1fr}.scanner-heading>.button{grid-column:1/-1}.scanner-heading>.button{width:100%}}
 .dashboard-guide{padding-bottom:22px}
 .organizer-tutorial{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(280px,.75fr);overflow:hidden;margin-bottom:22px;background:var(--navy2);border-color:var(--navy2);color:white}
 .organizer-tutorial-video{background:#071d30;display:grid;place-items:center;min-width:0}
