@@ -18,6 +18,7 @@ export function LiveUsers(){const {organization}=useWorkspace();const [rows,setR
 type RosterRow={id:string;status:string;volunteers:{first_name:string;last_name:string;email:string}|{first_name:string;last_name:string;email:string}[];attendance_sessions:{id:string;checked_in_at:string;checked_out_at:string|null;status:string}[]};
 type ScanMode='checkin'|'checkout';
 type ScanFeedback={action:string;volunteer_first_name:string|null;volunteer_last_name:string|null;occurred_at:string;message:string};
+type SyncStatus='connecting'|'connected'|'fallback';
 
 function scannerToken(value:string){
  const raw=value.trim();
@@ -52,6 +53,7 @@ export function LiveEventMode(){
  const {organization,profile}=useWorkspace();
  const [event,setEvent]=useState<{name:string}|null>(null),[rows,setRows]=useState<RosterRow[]>([]),[loading,setLoading]=useState(true),[error,setError]=useState('');
  const [scannerActive,setScannerActive]=useState(false),[scanMode,setScanMode]=useState<ScanMode>('checkin'),[scanValue,setScanValue]=useState(''),[scanBusy,setScanBusy]=useState(false),[feedback,setFeedback]=useState<ScanFeedback|null>(null);
+ const [syncStatus,setSyncStatus]=useState<SyncStatus>('connecting');
  const [deviceSession]=useState(()=>crypto.randomUUID());
  const scannerInput=useRef<HTMLInputElement>(null);
 
@@ -67,6 +69,26 @@ export function LiveEventMode(){
  };
 
  useEffect(()=>{load()},[eventId,organization.id]);
+ useEffect(()=>{
+  let refreshTimer:number|undefined;
+  const scheduleRefresh=()=>{
+   window.clearTimeout(refreshTimer);
+   refreshTimer=window.setTimeout(()=>load(true),120);
+  };
+  const channel=supabase!
+   .channel(`event-day-${eventId}-${crypto.randomUUID()}`)
+   .on('postgres_changes',{event:'*',schema:'public',table:'attendance_sessions',filter:`event_id=eq.${eventId}`},scheduleRefresh)
+   .subscribe(status=>{
+    if(status==='SUBSCRIBED')setSyncStatus('connected');
+    else if(status==='CHANNEL_ERROR'||status==='TIMED_OUT'||status==='CLOSED')setSyncStatus('fallback');
+   });
+  const fallbackPoll=window.setInterval(()=>load(true),30000);
+  return()=>{
+   window.clearTimeout(refreshTimer);
+   window.clearInterval(fallbackPoll);
+   supabase!.removeChannel(channel);
+  };
+ },[eventId,organization.id]);
  useEffect(()=>{if(scannerActive)setTimeout(()=>scannerInput.current?.focus(),0)},[scannerActive,scanMode]);
 
  const toggle=async(row:RosterRow)=>{
@@ -103,7 +125,7 @@ export function LiveEventMode(){
  if(loading)return <section className="panel">Opening event day…</section>;
  return <>
   <Link className="back dashboard-return" to={`/app/events/${eventId}`}><ArrowLeft/>Back to opportunity</Link>
-  <div className="page-head"><div><span className="eyebrow">EVENT DAY</span><h1>{event?.name||'Opportunity'}</h1><p>Scan volunteer credentials or use the live roster for manual attendance.</p></div></div>
+  <div className="page-head"><div><span className="eyebrow">EVENT DAY</span><h1>{event?.name||'Opportunity'}</h1><p>Scan volunteer credentials or use the live roster for manual attendance.</p></div><div className={`realtime-badge ${syncStatus}`} role="status"><span/>{syncStatus==='connected'?'All stations synced':syncStatus==='fallback'?'Sync reconnecting · 30-second backup active':'Connecting all stations…'}</div></div>
   {error&&<div className="error">{error}</div>}
   <section className={`panel scanner-station ${scannerActive?'active':''}`}>
    <div className="scanner-heading"><div className="scanner-icon"><Usb/></div><div><span className="eyebrow">WIRED USB QR SCANNER</span><h2>{scannerActive?'Scanner station ready':'Connect your scanner'}</h2><p>{scannerActive?'Keep this page open. Scan each volunteer’s QR code from their phone.':'Plug in the scanner, then start the station. No driver or pairing is required.'}</p></div><button type="button" className={scannerActive?'button':'button primary'} onClick={()=>{setScannerActive(value=>!value);setFeedback(null)}}>{scannerActive?'Stop scanner':'Start USB scanner'}</button></div>

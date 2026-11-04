@@ -33,6 +33,11 @@
 .scan-feedback b,.scan-feedback small{display:block}.scan-feedback small{margin-top:4px}
 .scan-feedback.success{background:#e9f7f0;border-color:#acd9c4;color:#176a49}.scan-feedback.success>span{background:#cdebdc}
 .scan-feedback.warning{background:#fff4e9;border-color:#efc79f;color:#8a4e17}.scan-feedback.warning>span{background:#f8dfc4}
+.realtime-badge{min-height:34px;padding:0 12px;border:1px solid var(--line);border-radius:18px;background:white;color:var(--muted);display:flex!important;align-items:center;gap:8px;font-size:11px;font-weight:700;white-space:nowrap}
+.realtime-badge>span{width:8px;height:8px;border-radius:50%;background:#d18a21;box-shadow:0 0 0 4px #d18a2118}
+.realtime-badge.connected{color:var(--success);border-color:#b9decc;background:#f3fbf7}.realtime-badge.connected>span{background:var(--success);box-shadow:0 0 0 4px #247a5718}
+.realtime-badge.fallback{color:#8a5b19;border-color:#ead3ac;background:#fffaf1}.realtime-badge.fallback>span{animation:sync-pulse 1.4s ease-in-out infinite}
+@keyframes sync-pulse{50%{opacity:.35}}
 @media(max-width:700px){.scanner-heading{grid-template-columns:auto 1fr}.scanner-heading>.button{grid-column:1/-1}.scanner-heading>.button{width:100%}}
 .dashboard-guide{padding-bottom:22px}
 .organizer-tutorial{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(280px,.75fr);overflow:hidden;margin-bottom:22px;background:var(--navy2);border-color:var(--navy2);color:white}
