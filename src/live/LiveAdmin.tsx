@@ -52,7 +52,7 @@ export function LiveEventMode(){
  const {eventId}=useParams();
  const {organization,profile}=useWorkspace();
  const [event,setEvent]=useState<{name:string}|null>(null),[rows,setRows]=useState<RosterRow[]>([]),[loading,setLoading]=useState(true),[error,setError]=useState('');
- const [scannerActive,setScannerActive]=useState(false),[scanMode,setScanMode]=useState<ScanMode>('checkin'),[scanValue,setScanValue]=useState(''),[scanBusy,setScanBusy]=useState(false),[feedback,setFeedback]=useState<ScanFeedback|null>(null);
+ const [scannerActive,setScannerActive]=useState(true),[scanMode,setScanMode]=useState<ScanMode>('checkin'),[scanValue,setScanValue]=useState(''),[scanBusy,setScanBusy]=useState(false),[feedback,setFeedback]=useState<ScanFeedback|null>(null);
  const [syncStatus,setSyncStatus]=useState<SyncStatus>('connecting');
  const [deviceSession]=useState(()=>crypto.randomUUID());
  const scannerInput=useRef<HTMLInputElement>(null);
@@ -89,7 +89,7 @@ export function LiveEventMode(){
    supabase!.removeChannel(channel);
   };
  },[eventId,organization.id]);
- useEffect(()=>{if(scannerActive)setTimeout(()=>scannerInput.current?.focus(),0)},[scannerActive,scanMode]);
+ useEffect(()=>{if(scannerActive&&!loading)setTimeout(()=>scannerInput.current?.focus(),0)},[scannerActive,scanMode,loading]);
 
  const toggle=async(row:RosterRow)=>{
   setError('');
