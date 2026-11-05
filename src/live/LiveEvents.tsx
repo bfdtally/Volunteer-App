@@ -13,7 +13,9 @@ import {
   Plus,
   PlayCircle,
   Repeat2,
+  ScanLine,
   Search,
+  UserCheck,
   Users,
   X,
 } from "lucide-react";
@@ -445,8 +447,8 @@ export function LiveEventDetail() {
           <Link className="button" to={`/event/${event.slug}`}>
             Public page <ArrowUpRight />
           </Link>
-          <Link className="button" to={`/app/events/${event.id}/event-day`}>
-            Event day <Check />
+          <Link className="button event-day-header-action" to={`/app/events/${event.id}/event-day`}>
+            <ScanLine /> Open check-in station
           </Link>
           <Link className="button primary" to={`/app/events/${event.id}/edit`}>
             Edit opportunity
@@ -479,6 +481,17 @@ export function LiveEventDetail() {
           icon={<Clock />}
         />
       </div>
+      <section className="panel event-day-launch">
+        <div className="event-day-launch-icon"><ScanLine /></div>
+        <div>
+          <span className="eyebrow">EVENT DAY</span>
+          <h2>Volunteer check-in station</h2>
+          <p>Open the station to scan volunteer QR codes, check people in or out manually, and watch attendance update across every station.</p>
+        </div>
+        <Link className="button primary" to={`/app/events/${event.id}/event-day`}>
+          <UserCheck /> Open check-in station <ChevronRight />
+        </Link>
+      </section>
       <div className="two-col wide-left live-event-detail">
         <section className="panel event-overview">
           <div className="section-head">
