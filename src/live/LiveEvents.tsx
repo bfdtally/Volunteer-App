@@ -448,7 +448,7 @@ export function LiveEventDetail() {
             Public page <ArrowUpRight />
           </Link>
           <Link className="button event-day-header-action" to={`/app/events/${event.id}/event-day`}>
-            <ScanLine /> Open check-in station
+            <ScanLine /> Event Day Scanning Station
           </Link>
           <Link className="button primary" to={`/app/events/${event.id}/edit`}>
             Edit opportunity
@@ -485,11 +485,11 @@ export function LiveEventDetail() {
         <div className="event-day-launch-icon"><ScanLine /></div>
         <div>
           <span className="eyebrow">EVENT DAY</span>
-          <h2>Volunteer check-in station</h2>
+          <h2>Event Day Scanning Station</h2>
           <p>Open the station to scan volunteer QR codes, check people in or out manually, and watch attendance update across every station.</p>
         </div>
         <Link className="button primary" to={`/app/events/${event.id}/event-day`}>
-          <UserCheck /> Open check-in station <ChevronRight />
+          <UserCheck /> Open Event Day Station <ChevronRight />
         </Link>
       </section>
       <div className="two-col wide-left live-event-detail">
