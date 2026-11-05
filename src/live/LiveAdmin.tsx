@@ -56,6 +56,8 @@ export function LiveEventMode(){
  const [syncStatus,setSyncStatus]=useState<SyncStatus>('connecting');
  const [deviceSession]=useState(()=>crypto.randomUUID());
  const scannerInput=useRef<HTMLInputElement>(null);
+ const scanBuffer=useRef('');
+ const scanTimer=useRef<number|undefined>(undefined);
 
  const load=async(silent=false)=>{
   if(!silent)setLoading(true);
@@ -100,9 +102,11 @@ export function LiveEventMode(){
   if(result.error)setError(result.error.message);else await load(true);
  };
 
- const scan=async()=>{
-  const token=scannerToken(scanValue);
+ const scan=async(rawValue?:string)=>{
+  const token=scannerToken(rawValue??scanValue);
   if(!token||scanBusy)return;
+  scanBuffer.current='';
+  window.clearTimeout(scanTimer.current);
   setScanBusy(true);setError('');setFeedback(null);setScanValue('');
   const {data,error:scanError}=await supabase!.rpc('scan_event_credential',{event_id:eventId!,secure_token:token,scan_mode:scanMode,device_session:deviceSession});
   if(scanError){
@@ -120,6 +124,34 @@ export function LiveEventMode(){
   setTimeout(()=>scannerInput.current?.focus(),0);
  };
 
+ useEffect(()=>{
+  if(!scannerActive)return;
+  const submitBuffer=()=>{
+   const value=scanBuffer.current;
+   scanBuffer.current='';
+   window.clearTimeout(scanTimer.current);
+   if(value)void scan(value);
+  };
+  const captureScanner=(event:KeyboardEvent)=>{
+   if(scanBusy||event.metaKey||event.ctrlKey||event.altKey)return;
+   if(event.key==='Enter'){
+    if(scanBuffer.current){event.preventDefault();event.stopPropagation();submitBuffer()}
+    return;
+   }
+   if(event.key.length!==1)return;
+   event.preventDefault();
+   scanBuffer.current+=event.key;
+   setScanValue(scanBuffer.current);
+   window.clearTimeout(scanTimer.current);
+   scanTimer.current=window.setTimeout(submitBuffer,180);
+  };
+  window.addEventListener('keydown',captureScanner,true);
+  return()=>{
+   window.removeEventListener('keydown',captureScanner,true);
+   window.clearTimeout(scanTimer.current);
+  };
+ },[scannerActive,scanBusy,scanMode,eventId,deviceSession]);
+
  const checkedIn=rows.filter(r=>r.attendance_sessions.some(x=>!x.checked_out_at&&x.status==='open')).length;
  const feedbackSuccess=feedback?.action==='checked_in'||feedback?.action==='checked_out';
  if(loading)return <section className="panel">Opening event day…</section>;
@@ -131,7 +163,7 @@ export function LiveEventMode(){
    <div className="scanner-heading"><div className="scanner-icon"><Usb/></div><div><span className="eyebrow">WIRED USB QR SCANNER</span><h2>{scannerActive?'Scanner station ready':'Connect your scanner'}</h2><p>{scannerActive?'Keep this page open. Scan each volunteer’s QR code from their phone.':'Plug in the scanner, then start the station. No driver or pairing is required.'}</p></div><button type="button" className={scannerActive?'button':'button primary'} onClick={()=>{setScannerActive(value=>!value);setFeedback(null)}}>{scannerActive?'Stop scanner':'Start USB scanner'}</button></div>
    {scannerActive&&<div className="scanner-console">
     <div className="scan-mode" role="group" aria-label="Scanner action"><button type="button" className={scanMode==='checkin'?'active':''} onClick={()=>setScanMode('checkin')}><Check/>Check in</button><button type="button" className={scanMode==='checkout'?'active':''} onClick={()=>setScanMode('checkout')}><LogOut/>Check out</button></div>
-    <label className="scanner-input"><ScanLine/><span><b>{scanBusy?'Processing scan…':'Scanner input ready'}</b><small>The scanner should type the code and press Enter automatically.</small></span><input ref={scannerInput} value={scanValue} onChange={e=>setScanValue(e.target.value)} onKeyDown={e=>{if(e.key==='Enter'){e.preventDefault();scan()}}} onBlur={()=>setTimeout(()=>scannerInput.current?.focus(),80)} disabled={scanBusy} autoComplete="off" aria-label="USB scanner input"/></label>
+    <label className="scanner-input"><ScanLine/><span><b>{scanBusy?'Processing scan…':'Scanner input ready — scan anywhere on this page'}</b><small>VolunteerHQ captures the scanner automatically, with or without an Enter suffix.</small></span><input ref={scannerInput} value={scanValue} onChange={e=>{scanBuffer.current=e.target.value;setScanValue(e.target.value)}} onBlur={()=>setTimeout(()=>scannerInput.current?.focus(),80)} disabled={scanBusy} autoComplete="off" aria-label="USB scanner input"/></label>
     {feedback&&<div className={`scan-feedback ${feedbackSuccess?'success':'warning'}`} role="status"><span>{feedbackSuccess?<Check/>:<ScanLine/>}</span><div><b>{feedback.message}</b><small>{new Date(feedback.occurred_at).toLocaleTimeString([],{hour:'numeric',minute:'2-digit',second:'2-digit'})} · {feedbackSuccess?(feedback.action==='checked_in'?'Attendance check-in recorded':'Attendance checkout recorded'):'No attendance change was made'}</small></div></div>}
    </div>}
   </section>
