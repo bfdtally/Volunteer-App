@@ -41,6 +41,7 @@ type EventRow = {
   location: string;
   capacity: number | null;
   status: string;
+  participant_registration_enabled: boolean;
   registrations?: { count: number }[];
 };
 type EventOccurrence = {
@@ -450,6 +451,9 @@ export function LiveEventDetail() {
           <Link className="button event-day-header-action" to={`/app/events/${event.id}/event-day`}>
             <ScanLine /> Event Day Scanning Station
           </Link>
+          {event.participant_registration_enabled && <Link className="button event-day-header-action" to={`/app/events/${event.id}/participant-event-day`}>
+            <Users /> Participant Scanning Station
+          </Link>}
           <Link className="button primary" to={`/app/events/${event.id}/edit`}>
             Edit opportunity
           </Link>
@@ -492,6 +496,17 @@ export function LiveEventDetail() {
           <UserCheck /> Open Event Day Station <ChevronRight />
         </Link>
       </section>
+      {event.participant_registration_enabled && <section className="panel event-day-launch participant-launch">
+        <div className="event-day-launch-icon"><Users /></div>
+        <div>
+          <span className="eyebrow">PARTICIPANT EVENT MODE</span>
+          <h2>Participant Scanning Station</h2>
+          <p>Scan participant-only credentials, manage the participant roster, and record individual attendance for families and groups.</p>
+        </div>
+        <Link className="button primary" to={`/app/events/${event.id}/participant-event-day`}>
+          <UserCheck /> Open Participant Station <ChevronRight />
+        </Link>
+      </section>}
       <div className="two-col wide-left live-event-detail">
         <section className="panel event-overview">
           <div className="section-head">
