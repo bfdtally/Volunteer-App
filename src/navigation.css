@@ -43,6 +43,7 @@
 .event-day-launch{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:18px;padding:22px 24px;margin-bottom:22px;border-color:#9db7c6;background:linear-gradient(135deg,#f7fbfd,#fff)}
 .event-day-launch-icon{width:54px;height:54px;border-radius:13px;background:var(--navy);color:white;display:grid;place-items:center;box-shadow:0 7px 18px #17324b24}
 .event-day-launch-icon svg{width:27px;height:27px}.event-day-launch h2{margin:3px 0 5px}.event-day-launch p{margin:0;max-width:760px;font-size:13px}.event-day-launch>.button{min-height:45px;white-space:nowrap}
+.qr img{width:min(340px,100%);height:auto;border-radius:0;image-rendering:pixelated}.qr b{margin-top:8px}.qr small{text-align:center;max-width:290px}
 @media(max-width:850px){.event-day-launch{grid-template-columns:auto 1fr}.event-day-launch>.button{grid-column:1/-1;width:100%}}
 .dashboard-guide{padding-bottom:22px}
 .organizer-tutorial{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(280px,.75fr);overflow:hidden;margin-bottom:22px;background:var(--navy2);border-color:var(--navy2);color:white}
